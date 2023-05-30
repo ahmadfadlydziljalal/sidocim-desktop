@@ -13,7 +13,8 @@ import com.tresnamuda.sidocim.ui.MainForm;
 public class App {
 
     public static void main(String[] args) {
-        MainForm mf = new MainForm();
-        mf.setVisible(true);
+        java.awt.EventQueue.invokeLater(() -> {
+            new MainForm().setVisible(true);
+        });
     }
 }

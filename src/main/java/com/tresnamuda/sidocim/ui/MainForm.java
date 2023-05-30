@@ -4,7 +4,6 @@
  */
 package com.tresnamuda.sidocim.ui;
 
-
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
@@ -22,6 +21,8 @@ public class MainForm extends javax.swing.JFrame {
      * Creates new form MainForm
      */
     public MainForm() {
+//        FlatMacDarkLaf.setup();
+        FlatLaf.registerCustomDefaultsSource("theme");
         FlatMacDarkLaf.setup();
         SwingUtilities.updateComponentTreeUI(this);
         initComponents();
@@ -36,11 +37,10 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        menu1 = new com.tresnamuda.sidocim.ui.menu.Menu();
         jMenuBar1 = new javax.swing.JMenuBar();
         jFileMenu = new javax.swing.JMenu();
         jQuitMenuItem = new javax.swing.JMenuItem();
-        jMenu1 = new javax.swing.JMenu();
-        menuLightMenu = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SIDOCIM");
@@ -53,59 +53,30 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenuBar1.add(jFileMenu);
 
-        jMenu1.setText("Options");
-
-        menuLightMenu.setText("Light Menu");
-        menuLightMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuLightMenuActionPerformed(evt);
-            }
-        });
-        jMenu1.add(menuLightMenu);
-
-        jMenuBar1.add(jMenu1);
-
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 748, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(menu1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 684, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 476, Short.MAX_VALUE)
+            .addComponent(menu1, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void menuLightMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLightMenuActionPerformed
-        if (menuLightMenu.isSelected()) {
-            EventQueue.invokeLater(() -> {
-                FlatAnimatedLafChange.showSnapshot();
-                FlatMacLightLaf.setup();
-                FlatLaf.updateUI();
-                FlatAnimatedLafChange.hideSnapshotWithAnimation();
-            });
-        } else {
-            EventQueue.invokeLater(() -> {
-                FlatAnimatedLafChange.showSnapshot();
-                FlatMacDarkLaf.setup();
-                FlatLaf.updateUI();
-                FlatAnimatedLafChange.hideSnapshotWithAnimation();
-            });
-        }
-    }//GEN-LAST:event_menuLightMenuActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jFileMenu;
-    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jQuitMenuItem;
-    private javax.swing.JCheckBoxMenuItem menuLightMenu;
+    private com.tresnamuda.sidocim.ui.menu.Menu menu1;
     // End of variables declaration//GEN-END:variables
 }
