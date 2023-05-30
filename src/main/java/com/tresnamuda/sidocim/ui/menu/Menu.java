@@ -9,6 +9,8 @@ import com.formdev.flatlaf.util.UIScale;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -86,12 +89,17 @@ public class Menu extends JPanel {
         putClientProperty(FlatClientProperties.STYLE, ""
                 + "border:20,2,2,2;"
                 + "background:$Menu.background;"
-                + "arc:10");
+                + "arc:0");
 
+        // Header App
         header = new JLabel(headerName, new ImageIcon(getClass().getResource("/img/logo.png")), JLabel.LEFT);
+        header.setIconTextGap(13);
+        header.setBorder(new EmptyBorder(0,20,0,20));
         header.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:$Menu.header.font;"
-                + "foreground:$Menu.foreground");
+                + "foreground:$Menu.foreground"
+             
+        );
 
         //  Menu
         scroll = new JScrollPane();
