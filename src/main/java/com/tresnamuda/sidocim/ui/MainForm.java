@@ -38,34 +38,26 @@ public class MainForm extends javax.swing.JFrame {
     private void initComponents() {
 
         menu1 = new com.tresnamuda.sidocim.ui.menu.Menu();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jFileMenu = new javax.swing.JMenu();
-        jQuitMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SIDOCIM");
         setAlwaysOnTop(true);
-
-        jFileMenu.setText("File");
-
-        jQuitMenuItem.setText("Quit");
-        jFileMenu.add(jQuitMenuItem);
-
-        jMenuBar1.add(jFileMenu);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(menu1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 684, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(menu1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(717, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menu1, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(menu1, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -74,9 +66,6 @@ public class MainForm extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu jFileMenu;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jQuitMenuItem;
     private com.tresnamuda.sidocim.ui.menu.Menu menu1;
     // End of variables declaration//GEN-END:variables
 }
