@@ -27,9 +27,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPilihFileButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="pathFileJTextField" pref="532" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jProcessExcelButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="pathFileJTextField" pref="615" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -40,7 +38,6 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jPilihFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jProcessExcelButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="pathFileJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -53,14 +50,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Pilih File"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="jProcessExcelButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Process"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jProcessExcelButtonActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="pathFileJTextField">
           <Properties>
