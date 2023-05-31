@@ -4,6 +4,24 @@
  */
 package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 
+import com.tresnamuda.sidocim.App;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 /**
  *
  * @author dzil
@@ -14,7 +32,73 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
      * Creates new form StampDepoProcessPage
      */
     public StampDepoProcessPage() {
+
         initComponents();
+        initFileChooser();
+
+        this.TopActionPanel.setPreferredSize(new Dimension(App.showWidth(), 50));
+        this.TopActionPanel.setMaximumSize(new Dimension(App.showWidth(), 50));
+   
+    }
+
+    private void initFileChooser() {
+        this.jPilihFileButton.addActionListener((ActionEvent e) -> {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                String filePath = selectedFile.getAbsolutePath();
+                pathFileJTextField.setText(filePath);
+            } else if (returnValue == JFileChooser.CANCEL_OPTION) {
+                pathFileJTextField.setText("File selection canceled.");
+            }
+        });
+    }
+
+    private void readExcelFile(File file) {
+        try (FileInputStream fis = new FileInputStream(file); Workbook workbook = new XSSFWorkbook(fis)) {
+
+            Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet
+
+            // Create the table model
+            DefaultTableModel tableModel = new DefaultTableModel();
+
+            // Get the column headers from the first row
+            Row headerRow = sheet.getRow(0);
+            for (Cell cell : headerRow) {
+                tableModel.addColumn(cell.getStringCellValue());
+            }
+
+            // Populate the rows in the table model
+            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                Row dataRow = sheet.getRow(rowIndex);
+                Object[] rowData = new Object[dataRow.getLastCellNum()];
+                for (int columnIndex = 0; columnIndex < dataRow.getLastCellNum(); columnIndex++) {
+                    Cell cell = dataRow.getCell(columnIndex);
+                   
+                    if (cell != null) {
+                        if (cell.getCellType() == CellType.STRING) {
+                             rowData[columnIndex] = cell.getStringCellValue();
+                        } else if (cell.getCellType() == CellType.NUMERIC) {
+                             rowData[columnIndex] = cell.getNumericCellValue();
+                        }
+                    }
+                }
+                tableModel.addRow(rowData);
+            }
+
+            // Create the JTable using the table model
+            JTable table = new JTable(tableModel);
+
+            // Optionally customize the JTable appearance or behavior
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Example: Disable auto-resizing
+
+            // Add the JTable to your JPanel
+            TablePanel.add(new JScrollPane(table));
+
+          
+        } catch (IOException e) {
+        }
     }
 
     /**
@@ -26,36 +110,68 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        TopActionPanel = new javax.swing.JPanel();
+        jPilihFileButton = new javax.swing.JButton();
+        jProcessExcelButton = new javax.swing.JButton();
+        pathFileJTextField = new javax.swing.JTextField();
+        TablePanel = new javax.swing.JPanel();
 
-        jLabel1.setFont(new java.awt.Font("Helvetica Neue", 0, 48)); // NOI18N
-        jLabel1.setText("Stamp Depo Content");
-        jLabel1.setRequestFocusEnabled(false);
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 456, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+        jPilihFileButton.setText("Pilih File");
+
+        jProcessExcelButton.setText("Process");
+        jProcessExcelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jProcessExcelButtonActionPerformed(evt);
+            }
+        });
+
+        pathFileJTextField.setText("....");
+
+        javax.swing.GroupLayout TopActionPanelLayout = new javax.swing.GroupLayout(TopActionPanel);
+        TopActionPanel.setLayout(TopActionPanelLayout);
+        TopActionPanelLayout.setHorizontalGroup(
+            TopActionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TopActionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPilihFileButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pathFileJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jProcessExcelButton)
+                .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel1)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+        TopActionPanelLayout.setVerticalGroup(
+            TopActionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TopActionPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(TopActionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPilihFileButton)
+                    .addComponent(jProcessExcelButton)
+                    .addComponent(pathFileJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        add(TopActionPanel);
+
+        TablePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 255, 0), 4));
+        TablePanel.setLayout(new java.awt.BorderLayout());
+        add(TablePanel);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jProcessExcelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jProcessExcelButtonActionPerformed
+        File selectedFile = new File(pathFileJTextField.getText());
+        readExcelFile(selectedFile);
+    }//GEN-LAST:event_jProcessExcelButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel TablePanel;
+    private javax.swing.JPanel TopActionPanel;
+    private javax.swing.JButton jPilihFileButton;
+    private javax.swing.JButton jProcessExcelButton;
+    private javax.swing.JTextField pathFileJTextField;
     // End of variables declaration//GEN-END:variables
+
 }
