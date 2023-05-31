@@ -37,7 +37,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
     private JTable table;
     private DefaultTableModel tableModel;
-    private JProgressBar progressBar;
+
     private JDialog notificationDialog;
 
     /**
@@ -55,7 +55,8 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     }
 
     private void initProgressBar() {
-        progressBar = new JProgressBar(0, 100);
+        this.progressPanel.setPreferredSize(new Dimension(App.showWidth(), 25));
+        this.progressPanel.setMaximumSize(new Dimension(App.showWidth(), 25));
         progressBar.setStringPainted(true);
     }
 
@@ -67,8 +68,6 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                 File selectedFile = fileChooser.getSelectedFile();
                 String filePath = selectedFile.getAbsolutePath();
                 pathFileJTextField.setText(filePath);
-
-                TablePanel.add(this.progressBar, BorderLayout.SOUTH);
                 readExcelFileInBackground(selectedFile);
 
             } else if (returnValue == JFileChooser.CANCEL_OPTION) {
@@ -135,8 +134,9 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             }
 
             @Override
+
+            // This method is executed on the UI main thread
             protected void done() {
-                // This method is executed on the UI main thread
 
                 // Perform any additional UI updates or post-processing here
                 table = new JTable(tableModel);
@@ -146,6 +146,8 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
                 // Add the JTable to your JPanel
                 TablePanel.add(new JScrollPane(table));
+                TablePanel.repaint();
+                TablePanel.revalidate();
 
                 // Perform any additional UI updates or post-processing here
                 progressBar.setValue(100); // Set the progress bar to 100% when done
@@ -159,8 +161,9 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     }
 
     private void showNotificationDialog(String message) {
-        JFrame parentFrame = (JFrame) this.getRootPane().getParent(); 
+        JFrame parentFrame = (JFrame) this.getRootPane().getParent();
         notificationDialog = new JDialog(parentFrame, "Notification", true);
+
         JLabel label = new JLabel(message);
         label.setFont(new Font("Arial", Font.PLAIN, 18));
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -183,6 +186,8 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         jPilihFileButton = new javax.swing.JButton();
         pathFileJTextField = new javax.swing.JTextField();
         TablePanel = new javax.swing.JPanel();
+        progressPanel = new javax.swing.JPanel();
+        progressBar = new javax.swing.JProgressBar();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
@@ -198,7 +203,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPilihFileButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pathFileJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
+                .addComponent(pathFileJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
                 .addContainerGap())
         );
         TopActionPanelLayout.setVerticalGroup(
@@ -213,9 +218,27 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
         add(TopActionPanel);
 
-        TablePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(51, 255, 0), 4));
         TablePanel.setLayout(new java.awt.BorderLayout());
         add(TablePanel);
+
+        javax.swing.GroupLayout progressPanelLayout = new javax.swing.GroupLayout(progressPanel);
+        progressPanel.setLayout(progressPanelLayout);
+        progressPanelLayout.setHorizontalGroup(
+            progressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(progressPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        progressPanelLayout.setVerticalGroup(
+            progressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, progressPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        add(progressPanel);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -224,6 +247,8 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     private javax.swing.JPanel TopActionPanel;
     private javax.swing.JButton jPilihFileButton;
     private javax.swing.JTextField pathFileJTextField;
+    private javax.swing.JProgressBar progressBar;
+    private javax.swing.JPanel progressPanel;
     // End of variables declaration//GEN-END:variables
 
 }
