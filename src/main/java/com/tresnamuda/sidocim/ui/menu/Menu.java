@@ -68,7 +68,7 @@ public class Menu extends JPanel {
 
     private final List<MenuEvent> events = new ArrayList<>();
     private boolean menuFull = true;
-    private final String headerName = "Desktop App";
+    private final String headerName = "Tresnamuda";
 
     private final boolean hideMenuTitleOnMinimum = true;
     private final int menuTitleLeftInset = 5;
@@ -87,7 +87,7 @@ public class Menu extends JPanel {
         putClientProperty(FlatClientProperties.STYLE, ""
                 + "border:20,2,2,2;"
                 + "background:$Menu.background;"
-                + "arc:0");
+                + "arc:16");
 
         // Header App
         header = new JLabel(headerName, new ImageIcon(getClass().getResource("/img/logo.png")), JLabel.LEFT);
