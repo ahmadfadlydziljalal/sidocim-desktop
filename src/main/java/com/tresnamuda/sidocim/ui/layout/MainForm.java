@@ -8,16 +8,20 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.util.UIScale;
 import com.tresnamuda.sidocim.App;
-import com.tresnamuda.sidocim.ui.pages.FormInbox;
-import com.tresnamuda.sidocim.ui.pages.FormRead;
 import com.tresnamuda.sidocim.ui.menu.Menu;
+import com.tresnamuda.sidocim.ui.pages.OuterPanel;
+import com.tresnamuda.sidocim.ui.pages.dashboard.DashboardPage;
+import com.tresnamuda.sidocim.ui.pages.stamp_depo.StampDepoProcessPage;
+import com.tresnamuda.sidocim.ui.pages.stamp_depo.StampDepoTemplatePage;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -32,6 +36,7 @@ public class MainForm extends JLayeredPane {
     private Menu menu;
     private JPanel panelBody;
     private JButton menuButton;
+    private OuterPanel outerPanel = null;
 
     /**
      * Creates new form MainForm
@@ -41,11 +46,13 @@ public class MainForm extends JLayeredPane {
     }
 
     private void init() {
+
         setBorder(new EmptyBorder(5, 5, 5, 5));
         setLayout(new MainForm.MainFormLayout());
+        
         menu = new Menu();
-
         panelBody = new JPanel(new BorderLayout());
+        
         menuButton = new JButton(new FlatSVGIcon("img/menu_left.svg", 0.8f));
         menuButton.putClientProperty(FlatClientProperties.STYLE, ""
                 + "background:$Menu.button.background;"
@@ -55,13 +62,14 @@ public class MainForm extends JLayeredPane {
         menuButton.addActionListener((ActionEvent e) -> {
             setMenuFull(!menu.isMenuFull());
         });
-        
+
         initMenuEvent();
         setLayer(menuButton, JLayeredPane.POPUP_LAYER);
         add(menuButton);
         add(menu);
         add(panelBody);
-
+        
+        this.showForm(new OuterPanel(new DashboardPage(), "Dashboard"));
     }
 
     private void setMenuFull(boolean full) {
@@ -80,18 +88,17 @@ public class MainForm extends JLayeredPane {
 
     private void initMenuEvent() {
         menu.addMenuEvent((int index, int subIndex) -> {
-            // App.mainForm.showForm(new DefaultForm("Form : " + index + " " + subIndex));
-            if (index == 1) {
-                if (subIndex == 1) {
-                    App.showForm(new FormInbox());
-                } else if (subIndex == 2) {
-                    App.showForm(new FormRead());
+            switch (index) {
+                case 0 -> outerPanel = new OuterPanel(new DashboardPage(), "Dashboard");
+                case 1 -> outerPanel = new OuterPanel(new StampDepoTemplatePage(), "Stamp Depo Template");
+                case 2 -> outerPanel = new OuterPanel(new StampDepoProcessPage(), "Stamp Depo Process");
+                case 3 -> outerPanel = new OuterPanel(new DashboardPage(), "Test");
+                default -> {
                 }
-            } else if (index == 11) {
-                App.logout();
             }
-            
+            App.showForm(outerPanel);
         });
+
     }
 
     private class MainFormLayout implements LayoutManager {

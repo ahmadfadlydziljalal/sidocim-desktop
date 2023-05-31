@@ -4,12 +4,12 @@
  */
 package com.tresnamuda.sidocim;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.tresnamuda.sidocim.ui.layout.LoginForm;
 import com.tresnamuda.sidocim.ui.layout.MainForm;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.SwingUtilities;
@@ -20,26 +20,52 @@ import javax.swing.SwingUtilities;
  */
 public class App extends javax.swing.JFrame {
 
+    
+    static final int WINDOW_WIDTH = 1200;
+    static final int WINDOW_HEIGHT = 768;
+    
     private static App app;
-    private MainForm mainForm = null;
-    private LoginForm loginForm = null;
+    private final MainForm mainForm;
+    private final LoginForm loginForm;
 
+    
+    /**
+     * Mengembalikan ukuran tinggi form
+     * @return int
+     */
+    public static int showHeight() {
+        return app != null ? app.getHeight() :  WINDOW_WIDTH;
+    }
+    
+    
+    /**
+     * Mengembalikan ukuran lebar form
+     * @return int
+     */
+    public static int showWidth() {
+        return app != null ? app.getWidth() : WINDOW_WIDTH;
+    }
+    
+   
     /**
      * Creates new form Application
      */
     public App() {
         initComponents();
-        setSize(new Dimension(1200, 768));
+        
+        setSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         setLocationRelativeTo(null);
+        
         mainForm = new MainForm();
         loginForm = new LoginForm();
+        
         setContentPane(mainForm);
     }
 
     public static void showForm(Component component) {
         app.mainForm.showForm(component);
     }
-
+    
     public static void login() {
         FlatAnimatedLafChange.showSnapshot();
         app.setContentPane(app.mainForm);

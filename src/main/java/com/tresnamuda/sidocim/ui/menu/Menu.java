@@ -29,20 +29,22 @@ public class Menu extends JPanel {
     private final String menuItems[][] = {
         {"~MAIN~"},
         {"Dashboard"},
-        {"~WEB APP~"},
-        {"Email", "Inbox", "Read", "Compost"},
-        {"Chat"},
-        {"Calendar"},
-        {"~COMPONENT~"},
-        {"UI Kit", "Accordion", "Alerts", "Badges", "Breadcrumbs", "Buttons", "Button group"},
-        {"Advanced UI", "Cropper", "Owl Carousel", "Sweet Alert"},
-        {"Forms", "Basic Elements", "Advanced Elements", "SEditors", "Wizard"},
-        {"~OTHER~"},
-        {"Charts", "Apex", "Flot", "Peity", "Sparkline"},
-        {"Table", "Basic Tables", "Data Table"},
-        {"Icons", "Feather Icons", "Flag Icons", "Mdi Icons"},
-        {"Special Pages", "Blank page", "Faq", "Invoice", "Profile", "Pricing", "Timeline"},
-        {"Logout"}
+        {"~STAMP DEPO~"},
+//        {"Template", "Process"},
+        {"Template"},
+        {"Process"},        
+        {"Test"},
+
+//        {"~COMPONENT~"},
+//        {"UI Kit", "Accordion", "Alerts", "Badges", "Breadcrumbs", "Buttons", "Button group"},
+//        {"Advanced UI", "Cropper", "Owl Carousel", "Sweet Alert"},
+//        {"Forms", "Basic Elements", "Advanced Elements", "SEditors", "Wizard"},
+//        {"~OTHER~"},
+//        {"Charts", "Apex", "Flot", "Peity", "Sparkline"},
+//        {"Table", "Basic Tables", "Data Table"},
+//        {"Icons", "Feather Icons", "Flag Icons", "Mdi Icons"},
+//        {"Special Pages", "Blank page", "Faq", "Invoice", "Profile", "Pricing", "Timeline"},
+//        {"Logout"}
     };
 
     public boolean isMenuFull() {
