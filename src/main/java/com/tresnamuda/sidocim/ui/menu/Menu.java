@@ -9,8 +9,6 @@ import com.formdev.flatlaf.util.UIScale;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.util.ArrayList;
@@ -70,7 +68,7 @@ public class Menu extends JPanel {
 
     private final List<MenuEvent> events = new ArrayList<>();
     private boolean menuFull = true;
-    private final String headerName = "Tresnamuda";
+    private final String headerName = "Desktop App";
 
     private final boolean hideMenuTitleOnMinimum = true;
     private final int menuTitleLeftInset = 5;
