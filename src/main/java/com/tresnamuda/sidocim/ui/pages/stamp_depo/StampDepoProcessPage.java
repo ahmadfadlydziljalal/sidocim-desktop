@@ -5,6 +5,7 @@
 package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 
 import com.tresnamuda.sidocim.App;
+import com.tresnamuda.sidocim.ui.models.ExcelFileReader;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -83,51 +84,16 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     }
 
     private void readExcelFileInBackground(File file) {
-        SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
+        SwingWorker<DefaultTableModel, Integer> worker = new SwingWorker<DefaultTableModel, Integer>() {
+            
             @Override
-            protected Void doInBackground() throws Exception {
-                
-                FileInputStream fis = new FileInputStream(file);
-                try (Workbook workbook = new XSSFWorkbook(fis)) {
-                    Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet
-                    
-                    // Create the table model
-                    tableModel = new DefaultTableModel();
-                    
-                    // Get the column headers from the first row
-                    Row headerRow = sheet.getRow(0);
-                    for (Cell cell : headerRow) {
-                        tableModel.addColumn(cell.getStringCellValue());
-                    }
-                    
-                    int totalRows = sheet.getLastRowNum();
-                    int currentRow = 0;
-                    
-                    // Populate the rows in the table model
-                    for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
-                        Row dataRow = sheet.getRow(rowIndex);
-                        Object[] rowData = new Object[dataRow.getLastCellNum()];
-                        for (int columnIndex = 0; columnIndex < dataRow.getLastCellNum(); columnIndex++) {
-                            Cell cell = dataRow.getCell(columnIndex);
-                            
-                            if (cell != null) {
-                                if (cell.getCellType() == CellType.STRING) {
-                                    rowData[columnIndex] = cell.getStringCellValue();
-                                } else if (cell.getCellType() == CellType.NUMERIC) {
-                                    rowData[columnIndex] = cell.getNumericCellValue();
-                                }
-                            }
-                        }
-                        tableModel.addRow(rowData);
-                        
-                        currentRow = rowIndex;
-                        int progress = (int) ((double) currentRow / totalRows * 100);
+            protected DefaultTableModel doInBackground() throws Exception {
+                return ExcelFileReader.readExcelFile(file, new ExcelFileReader.ProgressListener() {
+                    @Override
+                    public void onProgressUpdated(int progress) {
                         publish(progress);
-                        
                     }
-                } // Assuming the first sheet
-
-                return null;
+                });
             }
 
             @Override

@@ -14,17 +14,18 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
-
 /**
  *
  * @author dzil
  */
 public class ExcelFileReader {
-    
-    public static DefaultTableModel readExcelFile(File file) throws Exception {
-        try (FileInputStream fis = new FileInputStream(file);
-             Workbook workbook = new XSSFWorkbook(fis)) {
+
+    public interface ProgressListener {
+        void onProgressUpdated(int progress);
+    }
+
+    public static DefaultTableModel readExcelFile(File file, ProgressListener listener) throws Exception {
+        try (FileInputStream fis = new FileInputStream(file); Workbook workbook = new XSSFWorkbook(fis)) {
 
             Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet
 
@@ -60,6 +61,8 @@ public class ExcelFileReader {
                 currentRow = rowIndex;
                 int progress = (int) ((double) currentRow / totalRows * 100);
                 // Publish progress if needed
+                listener.onProgressUpdated(progress);
+               
             }
 
             return tableModel;
