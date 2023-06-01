@@ -18,12 +18,13 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-
 
 /**
  *
@@ -63,7 +64,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileFilter(new XLSFileFilter());
-            
+
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
 
@@ -81,8 +82,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             }
         });
     }
-    
-  
+
     private void readExcelFileInBackground(File file) {
         SwingWorker<DefaultTableModel, Integer> worker = new SwingWorker<DefaultTableModel, Integer>() {
 
@@ -107,9 +107,9 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             @Override
             // This method is executed on the UI main thread
             protected void done() {
-               
+
                 try {
-                    
+
                     tableModel = get();
 
                     // Perform any additional UI updates or post-processing here
@@ -125,12 +125,12 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                     TablePanel.add(new JScrollPane(table));
                     TablePanel.repaint();
                     TablePanel.revalidate();
-                    
+
                     // Set the progress bar to 100% when done
-                    progressBar.setValue(100); 
+                    progressBar.setValue(100);
 
                     showNotificationDialog(file.getName() + " berhasil diload ...");
-                    
+
                 } catch (InterruptedException | ExecutionException ex) {
                     Logger.getLogger(StampDepoProcessPage.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -139,21 +139,23 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         };
 
         // Start the background task
-        worker.execute(); 
+        worker.execute();
     }
 
     private void showNotificationDialog(String message) {
-        JFrame parentFrame = (JFrame) this.getRootPane().getParent();
-        notificationDialog = new JDialog(parentFrame, "Notification", true);
-
-        messageLabel = new JLabel(message);
-        messageLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        notificationDialog.getContentPane().add(messageLabel);
-        notificationDialog.setSize(300, 200);
-        notificationDialog.setLocationRelativeTo(parentFrame);
-        notificationDialog.setVisible(true);
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        JOptionPane.showMessageDialog(parentFrame, message, "Notification", JOptionPane.INFORMATION_MESSAGE);
+//        JFrame parentFrame = (JFrame) this.getRootPane().getParent();
+//        notificationDialog = new JDialog(parentFrame, "Notification", true);
+//
+//        messageLabel = new JLabel(message);
+//        messageLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+//        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//        
+//        notificationDialog.getContentPane().add(messageLabel);
+//        notificationDialog.setSize(300, 200);
+//        notificationDialog.setLocationRelativeTo(parentFrame);
+//        notificationDialog.setVisible(true);
     }
 
     /**

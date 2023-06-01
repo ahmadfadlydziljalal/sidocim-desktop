@@ -33,9 +33,7 @@ public class ExcelFileReader {
             
             if (file.getName().endsWith(".xlsx")) {
                 workbook = new XSSFWorkbook(fis);
-            } 
-            
-            if (file.getName().endsWith(".xls")) {
+            }else if (file.getName().endsWith(".xls")) {
                 workbook = new HSSFWorkbook(fis);
             } else {
                 throw new IllegalArgumentException("Unsupported file format");
