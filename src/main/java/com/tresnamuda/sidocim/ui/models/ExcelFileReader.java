@@ -6,7 +6,6 @@ package com.tresnamuda.sidocim.ui.models;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import javax.swing.table.DefaultTableModel;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -15,21 +14,22 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+
+
 /**
  *
  * @author dzil
  */
-public class ExcelReader {
+public class ExcelFileReader {
     
-    private DefaultTableModel tableModel;
-    
-    private void readExcelFile(File file) {
-        try (FileInputStream fis = new FileInputStream(file); Workbook workbook = new XSSFWorkbook(fis)) {
+    public static DefaultTableModel readExcelFile(File file) throws Exception {
+        try (FileInputStream fis = new FileInputStream(file);
+             Workbook workbook = new XSSFWorkbook(fis)) {
 
             Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet
 
             // Create the table model
-            tableModel = new DefaultTableModel();
+            DefaultTableModel tableModel = new DefaultTableModel();
 
             // Get the column headers from the first row
             Row headerRow = sheet.getRow(0);
@@ -37,8 +37,11 @@ public class ExcelReader {
                 tableModel.addColumn(cell.getStringCellValue());
             }
 
+            int totalRows = sheet.getLastRowNum();
+            int currentRow = 0;
+
             // Populate the rows in the table model
-            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
                 Row dataRow = sheet.getRow(rowIndex);
                 Object[] rowData = new Object[dataRow.getLastCellNum()];
                 for (int columnIndex = 0; columnIndex < dataRow.getLastCellNum(); columnIndex++) {
@@ -53,11 +56,14 @@ public class ExcelReader {
                     }
                 }
                 tableModel.addRow(rowData);
+
+                currentRow = rowIndex;
+                int progress = (int) ((double) currentRow / totalRows * 100);
+                // Publish progress if needed
             }
 
-            
-        } catch (IOException e) {
-            e.printStackTrace();
+            return tableModel;
         }
     }
+
 }

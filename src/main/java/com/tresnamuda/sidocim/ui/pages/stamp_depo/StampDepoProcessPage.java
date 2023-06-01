@@ -37,24 +37,24 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
     private JTable table;
     private DefaultTableModel tableModel;
-
     private JDialog notificationDialog;
 
     /**
      * Creates new form StampDepoProcessPage
      */
     public StampDepoProcessPage() {
-
         initComponents();
-        initFileChooser();
-        initProgressBar();
-
-        this.TopActionPanel.setPreferredSize(new Dimension(App.showWidth(), 50));
-        this.TopActionPanel.setMaximumSize(new Dimension(App.showWidth(), 50));
-
+        initTopPanel();
+        initProgressPanel();
     }
 
-    private void initProgressBar() {
+    private void initTopPanel() {
+        this.TopActionPanel.setPreferredSize(new Dimension(App.showWidth(), 50));
+        this.TopActionPanel.setMaximumSize(new Dimension(App.showWidth(), 50));
+        initFileChooser();
+    }
+
+    private void initProgressPanel() {
         this.progressPanel.setPreferredSize(new Dimension(App.showWidth(), 25));
         this.progressPanel.setMaximumSize(new Dimension(App.showWidth(), 25));
         progressBar.setStringPainted(true);
@@ -62,15 +62,21 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
     private void initFileChooser() {
         this.jPilihFileButton.addActionListener((ActionEvent e) -> {
+            
             JFileChooser fileChooser = new JFileChooser();
             int returnValue = fileChooser.showOpenDialog(null);
+           
             if (returnValue == JFileChooser.APPROVE_OPTION) {
+                
                 File selectedFile = fileChooser.getSelectedFile();
                 String filePath = selectedFile.getAbsolutePath();
+                
                 pathFileJTextField.setText(filePath);
                 readExcelFileInBackground(selectedFile);
 
-            } else if (returnValue == JFileChooser.CANCEL_OPTION) {
+            }
+            
+            if (returnValue == JFileChooser.CANCEL_OPTION) {
                 pathFileJTextField.setText("File selection canceled.");
             }
         });
@@ -80,54 +86,53 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
             @Override
             protected Void doInBackground() throws Exception {
+                
                 FileInputStream fis = new FileInputStream(file);
-                Workbook workbook = new XSSFWorkbook(fis);
-
-                Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet
-
-                // Create the table model
-                tableModel = new DefaultTableModel();
-
-                // Get the column headers from the first row
-                Row headerRow = sheet.getRow(0);
-                for (Cell cell : headerRow) {
-                    tableModel.addColumn(cell.getStringCellValue());
-                }
-
-                int totalRows = sheet.getLastRowNum();
-                int currentRow = 0;
-
-                // Populate the rows in the table model
-                for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
-                    Row dataRow = sheet.getRow(rowIndex);
-                    Object[] rowData = new Object[dataRow.getLastCellNum()];
-                    for (int columnIndex = 0; columnIndex < dataRow.getLastCellNum(); columnIndex++) {
-                        Cell cell = dataRow.getCell(columnIndex);
-
-                        if (cell != null) {
-                            if (cell.getCellType() == CellType.STRING) {
-                                rowData[columnIndex] = cell.getStringCellValue();
-                            } else if (cell.getCellType() == CellType.NUMERIC) {
-                                rowData[columnIndex] = cell.getNumericCellValue();
+                try (Workbook workbook = new XSSFWorkbook(fis)) {
+                    Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet
+                    
+                    // Create the table model
+                    tableModel = new DefaultTableModel();
+                    
+                    // Get the column headers from the first row
+                    Row headerRow = sheet.getRow(0);
+                    for (Cell cell : headerRow) {
+                        tableModel.addColumn(cell.getStringCellValue());
+                    }
+                    
+                    int totalRows = sheet.getLastRowNum();
+                    int currentRow = 0;
+                    
+                    // Populate the rows in the table model
+                    for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
+                        Row dataRow = sheet.getRow(rowIndex);
+                        Object[] rowData = new Object[dataRow.getLastCellNum()];
+                        for (int columnIndex = 0; columnIndex < dataRow.getLastCellNum(); columnIndex++) {
+                            Cell cell = dataRow.getCell(columnIndex);
+                            
+                            if (cell != null) {
+                                if (cell.getCellType() == CellType.STRING) {
+                                    rowData[columnIndex] = cell.getStringCellValue();
+                                } else if (cell.getCellType() == CellType.NUMERIC) {
+                                    rowData[columnIndex] = cell.getNumericCellValue();
+                                }
                             }
                         }
+                        tableModel.addRow(rowData);
+                        
+                        currentRow = rowIndex;
+                        int progress = (int) ((double) currentRow / totalRows * 100);
+                        publish(progress);
+                        
                     }
-                    tableModel.addRow(rowData);
-
-                    currentRow = rowIndex;
-                    int progress = (int) ((double) currentRow / totalRows * 100);
-                    publish(progress);
-
-                }
-
-                workbook.close();
+                } // Assuming the first sheet
 
                 return null;
             }
 
             @Override
+            // This method is executed on the UI main thread
             protected void process(java.util.List<Integer> chunks) {
-                // This method is executed on the UI main thread
                 // Update the progress bar with the latest value
                 int progress = chunks.get(chunks.size() - 1);
                 progressBar.setValue(progress);
