@@ -5,7 +5,8 @@
 package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 
 import com.tresnamuda.sidocim.App;
-import com.tresnamuda.sidocim.ui.models.ExcelFileReader;
+import com.tresnamuda.sidocim.models.ExcelFileReader;
+import com.tresnamuda.sidocim.utils.XLSFileFilter;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -61,8 +63,9 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         this.jPilihFileButton.addActionListener((ActionEvent e) -> {
 
             JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new XLSFileFilter());
+            
             int returnValue = fileChooser.showOpenDialog(null);
-
             if (returnValue == JFileChooser.APPROVE_OPTION) {
 
                 File selectedFile = fileChooser.getSelectedFile();
@@ -79,7 +82,8 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             }
         });
     }
-
+    
+  
     private void readExcelFileInBackground(File file) {
         SwingWorker<DefaultTableModel, Integer> worker = new SwingWorker<DefaultTableModel, Integer>() {
 
