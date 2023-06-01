@@ -25,10 +25,12 @@ public class ExcelFileReader {
     }
 
     public static DefaultTableModel readExcelFile(File file, ProgressListener listener) throws Exception {
+        
         try (FileInputStream fis = new FileInputStream(file); Workbook workbook = new XSSFWorkbook(fis)) {
 
-            Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet
-
+            // Assuming the first sheet
+            Sheet sheet = workbook.getSheetAt(0);
+            
             // Create the table model
             DefaultTableModel tableModel = new DefaultTableModel();
 
@@ -60,7 +62,8 @@ public class ExcelFileReader {
 
                 currentRow = rowIndex;
                 int progress = (int) ((double) currentRow / totalRows * 100);
-                // Publish progress if needed
+                
+                // Publish progress
                 listener.onProgressUpdated(progress);
                
             }

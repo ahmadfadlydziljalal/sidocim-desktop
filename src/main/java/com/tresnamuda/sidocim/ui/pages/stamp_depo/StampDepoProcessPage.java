@@ -6,29 +6,23 @@ package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 
 import com.tresnamuda.sidocim.App;
 import com.tresnamuda.sidocim.ui.models.ExcelFileReader;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 /**
  *
@@ -39,6 +33,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private JDialog notificationDialog;
+    private JLabel messageLabel;
 
     /**
      * Creates new form StampDepoProcessPage
@@ -59,24 +54,26 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         this.progressPanel.setPreferredSize(new Dimension(App.showWidth(), 25));
         this.progressPanel.setMaximumSize(new Dimension(App.showWidth(), 25));
         progressBar.setStringPainted(true);
+        progressBar.setVisible(false);
     }
 
     private void initFileChooser() {
         this.jPilihFileButton.addActionListener((ActionEvent e) -> {
-            
+
             JFileChooser fileChooser = new JFileChooser();
             int returnValue = fileChooser.showOpenDialog(null);
-           
+
             if (returnValue == JFileChooser.APPROVE_OPTION) {
-                
+
                 File selectedFile = fileChooser.getSelectedFile();
                 String filePath = selectedFile.getAbsolutePath();
-                
+
                 pathFileJTextField.setText(filePath);
+                progressBar.setVisible(true);
                 readExcelFileInBackground(selectedFile);
 
             }
-            
+
             if (returnValue == JFileChooser.CANCEL_OPTION) {
                 pathFileJTextField.setText("File selection canceled.");
             }
@@ -85,7 +82,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
     private void readExcelFileInBackground(File file) {
         SwingWorker<DefaultTableModel, Integer> worker = new SwingWorker<DefaultTableModel, Integer>() {
-            
+
             @Override
             protected DefaultTableModel doInBackground() throws Exception {
                 return ExcelFileReader.readExcelFile(file, new ExcelFileReader.ProgressListener() {
@@ -105,40 +102,52 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             }
 
             @Override
-
             // This method is executed on the UI main thread
             protected void done() {
+               
+                try {
+                    
+                    tableModel = get();
 
-                // Perform any additional UI updates or post-processing here
-                table = new JTable(tableModel);
+                    // Perform any additional UI updates or post-processing here
+                    table = new JTable(tableModel);
 
-                // Optionally customize the JTable appearance or behavior
-                table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Example: Disable auto-resizing
+                    // Optionally customize the JTable appearance or behavior
+                    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Example: Disable auto-resizing
 
-                // Add the JTable to your JPanel
-                TablePanel.add(new JScrollPane(table));
-                TablePanel.repaint();
-                TablePanel.revalidate();
+                    // Remove All
+                    TablePanel.removeAll();
 
-                // Perform any additional UI updates or post-processing here
-                progressBar.setValue(100); // Set the progress bar to 100% when done
+                    // Add the JTable to your JPanel
+                    TablePanel.add(new JScrollPane(table));
+                    TablePanel.repaint();
+                    TablePanel.revalidate();
+                    
+                    // Set the progress bar to 100% when done
+                    progressBar.setValue(100); 
 
-                showNotificationDialog("Process Completed");
+                    showNotificationDialog(file.getName() + " berhasil diload ...");
+                    
+                } catch (InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(StampDepoProcessPage.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
             }
         };
 
-        worker.execute(); // Start the background task
+        // Start the background task
+        worker.execute(); 
     }
 
     private void showNotificationDialog(String message) {
         JFrame parentFrame = (JFrame) this.getRootPane().getParent();
         notificationDialog = new JDialog(parentFrame, "Notification", true);
 
-        JLabel label = new JLabel(message);
-        label.setFont(new Font("Arial", Font.PLAIN, 18));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        notificationDialog.getContentPane().add(label);
+        messageLabel = new JLabel(message);
+        messageLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        notificationDialog.getContentPane().add(messageLabel);
         notificationDialog.setSize(300, 200);
         notificationDialog.setLocationRelativeTo(parentFrame);
         notificationDialog.setVisible(true);
