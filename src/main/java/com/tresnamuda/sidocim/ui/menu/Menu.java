@@ -30,10 +30,8 @@ public class Menu extends JPanel {
         {"~MAIN~"},
         {"Dashboard"},
         {"~STAMP DEPO~"},
-//        {"Template", "Process"},
-        {"Template"},
         {"Process"},        
-        {"Test"},
+//        {"Test"},
 
 //        {"~COMPONENT~"},
 //        {"UI Kit", "Accordion", "Alerts", "Badges", "Breadcrumbs", "Buttons", "Button group"},

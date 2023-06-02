@@ -88,9 +88,7 @@ public class MainForm extends JLayeredPane {
         menu.addMenuEvent((int index, int subIndex) -> {
             switch (index) {
                 case 0 -> outerPanel = new OuterPanel(new DashboardPage(), "Dashboard");
-                case 1 -> outerPanel = new OuterPanel(new StampDepoTemplatePage(), "Stamp Depo Template");
-                case 2 -> outerPanel = new OuterPanel(new StampDepoProcessPage(), "Stamp Depo Process");
-                case 3 -> outerPanel = new OuterPanel(new DashboardPage(), "Test");
+                case 1 -> outerPanel = new OuterPanel(new StampDepoProcessPage(), "Stamp Depo Process");
                 default -> {
                 }
             }
