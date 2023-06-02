@@ -12,7 +12,6 @@ import com.tresnamuda.sidocim.ui.menu.Menu;
 import com.tresnamuda.sidocim.ui.pages.OuterPanel;
 import com.tresnamuda.sidocim.ui.pages.dashboard.DashboardPage;
 import com.tresnamuda.sidocim.ui.pages.stamp_depo.StampDepoProcessPage;
-import com.tresnamuda.sidocim.ui.pages.stamp_depo.StampDepoTemplatePage;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;

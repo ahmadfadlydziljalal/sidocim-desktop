@@ -39,19 +39,25 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
      */
     public StampDepoProcessPage() {
         initComponents();
-        initTopPanel();
+        initTopActionPanel();
+        initBottomActionPanel();
         initProgressPanel();
     }
 
-    private void initTopPanel() {
+    private void initTopActionPanel() {
         this.TopActionPanel.setPreferredSize(new Dimension(App.showWidth(), 50));
         this.TopActionPanel.setMaximumSize(new Dimension(App.showWidth(), 50));
         initFileChooser();
     }
 
+    private void initBottomActionPanel(){
+        this.BottomActionPanel.setPreferredSize(new Dimension(App.showWidth(), 50));
+        this.BottomActionPanel.setMaximumSize(new Dimension(App.showWidth(), 50));
+    }
+    
     private void initProgressPanel() {
-        this.progressPanel.setPreferredSize(new Dimension(App.showWidth(), 25));
-        this.progressPanel.setMaximumSize(new Dimension(App.showWidth(), 25));
+        this.ProgressPanel.setPreferredSize(new Dimension(App.showWidth(), 25));
+        this.ProgressPanel.setMaximumSize(new Dimension(App.showWidth(), 25));
         progressBar.setStringPainted(true);
         progressBar.setVisible(false);
     }
@@ -120,7 +126,6 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         worker.execute();
     }
     
-   
     private void renderTable() {
    
         // Create table
@@ -156,7 +161,8 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         jPilihFileButton = new javax.swing.JButton();
         pathFileJTextField = new javax.swing.JTextField();
         TablePanel = new javax.swing.JPanel();
-        progressPanel = new javax.swing.JPanel();
+        BottomActionPanel = new javax.swing.JPanel();
+        ProgressPanel = new javax.swing.JPanel();
         progressBar = new javax.swing.JProgressBar();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
@@ -191,34 +197,48 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         TablePanel.setLayout(new java.awt.BorderLayout());
         add(TablePanel);
 
-        javax.swing.GroupLayout progressPanelLayout = new javax.swing.GroupLayout(progressPanel);
-        progressPanel.setLayout(progressPanelLayout);
-        progressPanelLayout.setHorizontalGroup(
-            progressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(progressPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout BottomActionPanelLayout = new javax.swing.GroupLayout(BottomActionPanel);
+        BottomActionPanel.setLayout(BottomActionPanelLayout);
+        BottomActionPanelLayout.setHorizontalGroup(
+            BottomActionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 613, Short.MAX_VALUE)
+        );
+        BottomActionPanelLayout.setVerticalGroup(
+            BottomActionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        add(BottomActionPanel);
+
+        javax.swing.GroupLayout ProgressPanelLayout = new javax.swing.GroupLayout(ProgressPanel);
+        ProgressPanel.setLayout(ProgressPanelLayout);
+        ProgressPanelLayout.setHorizontalGroup(
+            ProgressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ProgressPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        progressPanelLayout.setVerticalGroup(
-            progressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, progressPanelLayout.createSequentialGroup()
+        ProgressPanelLayout.setVerticalGroup(
+            ProgressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ProgressPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        add(progressPanel);
+        add(ProgressPanel);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel BottomActionPanel;
+    private javax.swing.JPanel ProgressPanel;
     private javax.swing.JPanel TablePanel;
     private javax.swing.JPanel TopActionPanel;
     private javax.swing.JButton jPilihFileButton;
     private javax.swing.JTextField pathFileJTextField;
     private javax.swing.JProgressBar progressBar;
-    private javax.swing.JPanel progressPanel;
     // End of variables declaration//GEN-END:variables
 
 }
