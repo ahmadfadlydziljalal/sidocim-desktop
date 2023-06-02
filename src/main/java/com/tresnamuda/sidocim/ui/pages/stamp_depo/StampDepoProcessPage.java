@@ -6,25 +6,24 @@ package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 
 import com.tresnamuda.sidocim.App;
 import com.tresnamuda.sidocim.models.ExcelFileReader;
+import com.tresnamuda.sidocim.utils.CheckboxRenderer;
 import com.tresnamuda.sidocim.utils.XLSFileFilter;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+
 
 /**
  *
@@ -34,9 +33,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
     private JTable table;
     private DefaultTableModel tableModel;
-    private JDialog notificationDialog;
-    private JLabel messageLabel;
-
+   
     /**
      * Creates new form StampDepoProcessPage
      */
@@ -97,38 +94,19 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             }
 
             @Override
-            // This method is executed on the UI main thread
             protected void process(java.util.List<Integer> chunks) {
-                // Update the progress bar with the latest value
                 int progress = chunks.get(chunks.size() - 1);
                 progressBar.setValue(progress);
             }
 
             @Override
-            // This method is executed on the UI main thread
             protected void done() {
 
                 try {
 
                     tableModel = get();
-
-                    // Perform any additional UI updates or post-processing here
-                    table = new JTable(tableModel);
-
-                    // Optionally customize the JTable appearance or behavior
-                    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Example: Disable auto-resizing
-
-                    // Remove All
-                    TablePanel.removeAll();
-
-                    // Add the JTable to your JPanel
-                    TablePanel.add(new JScrollPane(table));
-                    TablePanel.repaint();
-                    TablePanel.revalidate();
-
-                    // Set the progress bar to 100% when done
+                    renderTable();
                     progressBar.setValue(100);
-
                     showNotificationDialog(file.getName() + " berhasil diload ...");
 
                 } catch (InterruptedException | ExecutionException ex) {
@@ -141,21 +119,28 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         // Start the background task
         worker.execute();
     }
+    
+   
+    private void renderTable() {
+   
+        // Create table
+        table = new JTable(tableModel);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        
+        // Render header checkbox
+        TableColumn checkboxColumn = table.getColumnModel().getColumn(0);
+        checkboxColumn.setHeaderRenderer(new CheckboxRenderer(table.getTableHeader()));
+        
+        // Repaint table panel
+        TablePanel.removeAll();
+        TablePanel.add(new JScrollPane(table));
+        TablePanel.repaint();
+        TablePanel.revalidate();
+    }
 
     private void showNotificationDialog(String message) {
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         JOptionPane.showMessageDialog(parentFrame, message, "Notification", JOptionPane.INFORMATION_MESSAGE);
-//        JFrame parentFrame = (JFrame) this.getRootPane().getParent();
-//        notificationDialog = new JDialog(parentFrame, "Notification", true);
-//
-//        messageLabel = new JLabel(message);
-//        messageLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-//        messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//        
-//        notificationDialog.getContentPane().add(messageLabel);
-//        notificationDialog.setSize(300, 200);
-//        notificationDialog.setLocationRelativeTo(parentFrame);
-//        notificationDialog.setVisible(true);
     }
 
     /**
