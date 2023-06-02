@@ -20,15 +20,14 @@ import javax.swing.table.TableModel;
  *
  * @author dzil
  */
-public class CheckboxRenderer implements TableCellRenderer {
+public class CheckboxRenderer extends JCheckBox implements TableCellRenderer {
 
-    private final JCheckBox jCheckBox = new JCheckBox();
-
+    
     public CheckboxRenderer(JTableHeader header) {
         
-        jCheckBox.setHorizontalAlignment(JLabel.CENTER);
-        jCheckBox.setOpaque(true);
-        jCheckBox.setSelected(false);
+        setHorizontalAlignment(JLabel.CENTER);
+        setOpaque(true);
+        setSelected(false);
 
         header.addMouseListener(new MouseAdapter() {
             @Override
@@ -38,9 +37,11 @@ public class CheckboxRenderer implements TableCellRenderer {
                 int viewColumn = columnModel.getColumnIndexAtX(e.getX());
                 int modelColumn = table.convertColumnIndexToModel(viewColumn);
                 if (modelColumn == 0) {
-                    jCheckBox.setSelected(!jCheckBox.isSelected());
+                    
+                    setSelected(!isSelected());
                     TableModel m = table.getModel();
-                    Boolean f = jCheckBox.isSelected();
+                    
+                    Boolean f = isSelected();
                     for (int i = 0; i < m.getRowCount(); i++) {
                         m.setValueAt(f, i, 0);
                     }
@@ -53,7 +54,7 @@ public class CheckboxRenderer implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        return jCheckBox;
+        return this;
     }
 
 }

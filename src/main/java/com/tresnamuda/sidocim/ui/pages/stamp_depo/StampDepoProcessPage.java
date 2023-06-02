@@ -103,9 +103,9 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             protected void done() {
 
                 try {
-
                     tableModel = get();
                     renderTable();
+                    
                     progressBar.setValue(100);
                     showNotificationDialog(file.getName() + " berhasil diload ...");
 

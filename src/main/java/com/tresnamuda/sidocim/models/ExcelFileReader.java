@@ -54,7 +54,7 @@ public class ExcelFileReader {
                     if (columnIndex == 0) {
                         return Boolean.class; // Use Boolean class for checkbox column
                     } else {
-                        //return super.getColumnClass(columnIndex);
+                        
                         // Get the first cell in the header row to determine the data type
                         CellType cellType = headerRow.getCell(columnIndex - 1).getCellType();
                         if (null == cellType) {
