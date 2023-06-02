@@ -27,7 +27,7 @@ public class CheckboxRenderer extends JCheckBox implements TableCellRenderer {
         
         setHorizontalAlignment(JLabel.CENTER);
         setOpaque(true);
-        setSelected(false);
+        setSelected(true);
 
         header.addMouseListener(new MouseAdapter() {
             @Override

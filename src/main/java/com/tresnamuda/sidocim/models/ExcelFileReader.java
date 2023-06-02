@@ -94,7 +94,7 @@ public class ExcelFileReader {
                 Object[] rowData = new Object[dataRow.getLastCellNum() + 1];
 
                 // Set initial checkbox state to false
-                rowData[0] = false;
+                rowData[0] = true;
 
                 for (int columnIndex = 0; columnIndex < dataRow.getLastCellNum(); columnIndex++) {
 
