@@ -37,6 +37,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -83,6 +84,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     }
 
     private void initFileChooser() {
+        progressBar.setVisible(false);
         this.jPilihFileButton.addActionListener((ActionEvent e) -> {
 
             JFileChooser fileChooser = new JFileChooser();
@@ -205,42 +207,94 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         // Get the selected rows
         int[] selectedRows = getSelectedRows();
 
-        // Print the selected rows
-        for (int row : selectedRows) {
-            generatePDF(row);
-        }
-    }
-
-    private void generatePDF(int row) {
+        String filePath;
 
         // Generate the PDF file
         try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
 
-            PDType1Font font = PDType1Font.HELVETICA_BOLD;
+            PDType1Font header1Font = PDType1Font.HELVETICA_BOLD;
+            PDType1Font header2Font = PDType1Font.HELVETICA;
+            PDType1Font contentFont = PDType1Font.HELVETICA;
+
             PDResources resources = new PDResources();
-            resources.put(COSName.getPDFName("Font"), font);
-            page.setResources(resources);
+            resources.put(COSName.getPDFName("Font"), header1Font);
 
-            String filePath;
+            // Print the selected rows
+            for (int row : selectedRows) {
 
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                PDPage page = new PDPage(PDRectangle.A4);
+                document.addPage(page);
 
-                contentStream.beginText();
-                contentStream.setFont(font, 12);
-                contentStream.newLineAtOffset(100, 700);
+                page.setResources(resources);
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
 
-                for (int col = 0; col < tableModel.getColumnCount(); col++) {
-                    Object value = tableModel.getValueAt(row, col);
+                    // Set header 1
+                    contentStream.beginText();
+                    contentStream.setFont(header1Font, 16);
+                    contentStream.setLeading(14.5f);
+                    contentStream.newLineAtOffset(25, 800);
+                    contentStream.showText("PT. PELAYARAN TRESNAMUDA SEJATI");
+                    contentStream.endText();
 
-                    if (value != null) {
+                    // Set header 2
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(25, 785);
+                    contentStream.setFont(header2Font, 10);
+                    contentStream.showText("Komplek Ruko Sunter Permai Indah - Jl. Mitra Sunter Boulevard. Block B No. 12-16.");
+                    contentStream.newLine();
+                    contentStream.showText("Jakarta Utara, 14360, Indonesia, Telp. +6221-6522333 (Hunting), Fax. +6221-6522336, 6522337");
+                    contentStream.endText();
 
-                        contentStream.showText(value.toString());
+                    // Draw a horizontal line
+                    contentStream.setLineWidth(1f);  // Set the line width
+                    contentStream.moveTo(20, 760);  // Starting point of the line
+                    contentStream.lineTo(page.getMediaBox().getWidth() - 25, 760);  // Ending point of the line
+                    contentStream.stroke();  // Draw the line
+                    
+                     // Set TITLE
+                    contentStream.beginText();
+                    contentStream.setFont(header1Font, 13);
+                    contentStream.newLineAtOffset(20 * 8, 745);
+                    contentStream.showText("Instruksi Pemulangan Kontainer Kosong");
+                    contentStream.endText();
+                         
+                    // Show some content of document here
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(25, 725);
+                    contentStream.setFont(contentFont, 11);
+                    contentStream.showText("DEPO: ");
+                    contentStream.newLine();
+
+                    // String to be auto-wrapped
+                    String longString = "PT.TUNAS MITRA SELARAS ( TRAS ) Alamat : Kawasan Industri Cakung Remaja JL.Raya Rorotan Babek TNI Blok B No.07 Jakarta Utara 14140 Indonesia, Telp : 021 22946296";
+
+                    // Width of the text box
+                    float textBoxWidth = page.getMediaBox().getWidth() - 25;  // Adjust the width as needed
+
+                    // Auto-wrap the long string to the next line
+                    float fontSize = 11;
+                    float leading = 14.5f;
+
+                    String[] words = longString.split(" ");
+                    StringBuilder line = new StringBuilder();
+                    for (String word : words) {
+                        float stringWidth = fontSize * contentFont.getStringWidth(line + " " + word) / 1000;
+                        if (stringWidth > textBoxWidth) {
+                            contentStream.showText(line.toString().trim());
+                            contentStream.newLineAtOffset(0, -leading);
+                            line = new StringBuilder(word);
+                        } else {
+                            line.append(" ").append(word);
+                        }
                     }
-                }
 
-                contentStream.endText();
+                    contentStream.showText(line.toString().trim());
+                    
+                
+                     
+                    contentStream.endText();
+
+                }
             }
 
             File file = new File(pathFileJTextField.getText());
@@ -248,19 +302,20 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                     FilenameUtils.removeExtension(file.getName())
             );
 
-            String directoryPath = System.getProperty("user.dir") + "/reports/" + extractedPath ;
+            String directoryPath = System.getProperty("user.dir") + "/reports/" + extractedPath;
             File directory = new File(directoryPath);
             if (!directory.exists()) {
-                 directory.mkdirs();
+                directory.mkdirs();
             }
 
-            filePath = directoryPath + "/" + table.getValueAt(row, 2) + ".pdf";
+            filePath = directoryPath + "/report.pdf";
             document.save(filePath);
-            System.out.println("PDF file generated for row " + row + " at " + filePath);
-            
+            document.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void showNotificationDialog(String message) {
