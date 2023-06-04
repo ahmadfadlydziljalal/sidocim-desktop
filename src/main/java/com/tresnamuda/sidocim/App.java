@@ -21,8 +21,8 @@ import javax.swing.SwingUtilities;
 public class App extends javax.swing.JFrame {
 
     
-    static final int WINDOW_WIDTH = 768;
-    static final int WINDOW_HEIGHT = 768 / 2;
+    static final int WINDOW_WIDTH = 919;
+    static final int WINDOW_HEIGHT = 500;
     
     private static App app;
     private final MainForm mainForm;

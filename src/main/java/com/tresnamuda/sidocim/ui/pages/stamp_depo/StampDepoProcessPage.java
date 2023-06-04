@@ -8,19 +8,17 @@ import com.tresnamuda.sidocim.App;
 import com.tresnamuda.sidocim.models.ExcelFileReader;
 import com.tresnamuda.sidocim.utils.CheckboxRenderer;
 import com.tresnamuda.sidocim.utils.XLSFileFilter;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -39,11 +37,11 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.vandeseer.easytable.TableDrawer;
+import org.vandeseer.easytable.settings.HorizontalAlignment;
+import org.vandeseer.easytable.structure.Row;
+import org.vandeseer.easytable.structure.Table;
+import org.vandeseer.easytable.structure.cell.TextCell;
 
 /**
  *
@@ -250,14 +248,14 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                     contentStream.moveTo(20, 760);  // Starting point of the line
                     contentStream.lineTo(page.getMediaBox().getWidth() - 25, 760);  // Ending point of the line
                     contentStream.stroke();  // Draw the line
-                    
-                     // Set TITLE
+
+                    // Set TITLE
                     contentStream.beginText();
                     contentStream.setFont(header1Font, 13);
                     contentStream.newLineAtOffset(20 * 8, 745);
                     contentStream.showText("Instruksi Pemulangan Kontainer Kosong");
                     contentStream.endText();
-                         
+
                     // Show some content of document here
                     contentStream.beginText();
                     contentStream.newLineAtOffset(25, 725);
@@ -289,11 +287,62 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                     }
 
                     contentStream.showText(line.toString().trim());
-                    
-                
-                     
                     contentStream.endText();
 
+                    // Build the table
+                    Table myTable = Table.builder()
+                            .addColumnsOfWidth(25, 87, 100, 88, 75, 87, 87)
+                            .padding(2)
+                            .addRow(
+                                    Row.builder()
+                                            .add(TextCell.builder().text("NO").horizontalAlignment(HorizontalAlignment.CENTER).fontSize(10).borderWidth(1).build())
+                                            .add(TextCell.builder().text("Nomor Kontainer").horizontalAlignment(HorizontalAlignment.CENTER).fontSize(10).borderWidth(1).build())
+                                            .add(TextCell.builder().text("B" + "\\" + "L").horizontalAlignment(HorizontalAlignment.CENTER).fontSize(10).borderWidth(1).build())
+                                            .add(TextCell.builder().text("Vessel").horizontalAlignment(HorizontalAlignment.CENTER).fontSize(10).borderWidth(1).build())
+                                            .add(TextCell.builder().text("ETA").horizontalAlignment(HorizontalAlignment.CENTER).fontSize(10).borderWidth(1).build())
+                                            .add(TextCell.builder().text("Consignee").horizontalAlignment(HorizontalAlignment.CENTER).fontSize(10).borderWidth(1).build())
+                                            .add(TextCell.builder().text("Commodity").horizontalAlignment(HorizontalAlignment.CENTER).fontSize(10).borderWidth(1).build())
+                                            .build())
+                            .addRow(
+                                    Row.builder()
+                                            .padding(2)
+                                            .add(TextCell.builder().text("1").horizontalAlignment(HorizontalAlignment.RIGHT).fontSize(10).borderWidth(1).borderWidthTop(0).build())
+                                            .add(TextCell.builder().text(tableModel.getValueAt(row, 2).toString()).fontSize(10).borderWidth(1).borderWidthTop(0).build())
+                                            .add(TextCell.builder().text(tableModel.getValueAt(row, 3).toString()).fontSize(10).borderWidth(1).borderWidthTop(0).build())
+                                            .add(TextCell.builder().text(tableModel.getValueAt(row, 12).toString()).fontSize(10).borderWidth(1).borderWidthTop(0).build())
+                                            .add(TextCell.builder().text(tableModel.getValueAt(row, 8).toString()).fontSize(10).borderWidth(1).borderWidthTop(0).build())
+                                            .add(TextCell.builder().text(tableModel.getValueAt(row, 13).toString()).fontSize(10).borderWidth(1).borderWidthTop(0).build())
+                                            .add(TextCell.builder().text(tableModel.getValueAt(row, 4).toString()).fontSize(10).borderWidth(1).borderWidthTop(0).build())
+                                            .build()
+                            )
+                            .build();
+
+                    // Set up the drawer
+                    TableDrawer tableDrawer = TableDrawer.builder()
+                            .contentStream(contentStream)
+                            .startX(20f)
+                            .startY(680)
+                            .table(myTable)
+                            .build();
+
+                    // And go for it!
+                    tableDrawer.draw();
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(25, (tableDrawer.getFinalY() - 30));
+                    contentStream.setFont(contentFont, 10);
+                    contentStream.showText("PERHATIAN !!!");
+                    contentStream.newLine();
+                    contentStream.showText("- Consignee / EMKL Harus Lakukan Cek Fisik dan ambil Photo Isotank Sebelum keluar CY");
+                    contentStream.newLine();
+                    contentStream.showText("- Apabila Terjadi Kerusakan / Kehilangan Part ( Aksesoris ) Isotank akibat kelalaian Pihak Importir maka EMKL");
+                    contentStream.newLine();
+                    contentStream.showText("  harus menyerahkan deposit seharga/ Senilai perbaikan kerusakan atau pergantian part");
+                     contentStream.newLine();
+                    contentStream.showText("  di kantor PT.Pelayaran Tresnamuda Sejati");
+
+                    contentStream.endText();
+                    contentStream.close();
                 }
             }
 
