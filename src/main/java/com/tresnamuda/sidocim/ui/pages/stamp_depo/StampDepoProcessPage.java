@@ -8,12 +8,12 @@ import com.tresnamuda.sidocim.App;
 import com.tresnamuda.sidocim.models.ExcelFileReader;
 import com.tresnamuda.sidocim.utils.CheckboxRenderer;
 import com.tresnamuda.sidocim.utils.XLSFileFilter;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -37,6 +38,11 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.icepdf.ri.common.ComponentKeyBinding;
+import org.icepdf.ri.common.MyAnnotationCallback;
+import org.icepdf.ri.common.SwingController;
+import org.icepdf.ri.common.SwingViewBuilder;
+import org.icepdf.ri.util.ViewerPropertiesManager;
 import org.vandeseer.easytable.TableDrawer;
 import org.vandeseer.easytable.settings.HorizontalAlignment;
 import org.vandeseer.easytable.structure.Row;
@@ -60,6 +66,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         initTopActionPanel();
         initBottomActionPanel();
         initProgressPanel();
+        initActionPDFViewerAcion();
     }
 
     private void initTopActionPanel() {
@@ -72,6 +79,12 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         this.BottomActionPanel.setPreferredSize(new Dimension(App.showWidth(), 30));
         this.BottomActionPanel.setMaximumSize(new Dimension(App.showWidth(), 30));
         this.BottomActionPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    }
+
+    private void initActionPDFViewerAcion() {
+        this.ActionPDFViewer.setPreferredSize(new Dimension(App.showWidth(), 30));
+        this.ActionPDFViewer.setMaximumSize(new Dimension(App.showWidth(), 30));
+        this.ActionPDFViewer.setLayout(new FlowLayout(FlowLayout.LEFT));
     }
 
     private void initProgressPanel() {
@@ -338,7 +351,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                     contentStream.showText("- Apabila Terjadi Kerusakan / Kehilangan Part ( Aksesoris ) Isotank akibat kelalaian Pihak Importir maka EMKL");
                     contentStream.newLine();
                     contentStream.showText("  harus menyerahkan deposit seharga/ Senilai perbaikan kerusakan atau pergantian part");
-                     contentStream.newLine();
+                    contentStream.newLine();
                     contentStream.showText("  di kantor PT.Pelayaran Tresnamuda Sejati");
 
                     contentStream.endText();
@@ -361,10 +374,39 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             document.save(filePath);
             document.close();
 
+            openPdf(filePath);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void openPdf(String file) {
+
+        CardPanel1.setVisible(false);
+        CardPanel2.setVisible(true);
+
+        SwingController controller = new SwingController();
+        SwingViewBuilder factory = new SwingViewBuilder(controller);
+        JPanel viewerPanel = factory.buildViewerPanel();
+        ComponentKeyBinding.install(controller, viewerPanel);
+        controller.getDocumentViewController().setAnnotationCallback(
+                new MyAnnotationCallback(
+                        controller.getDocumentViewController()
+                )
+        );
+
+        try {
+            File propertiesFile = new File(App.class.getResource("/application.properties").toURI());
+            ViewerPropertiesManager.importProperties(propertiesFile);
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(StampDepoProcessPage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        controller.openDocument(file);
+        PDFViewer.setViewportView(viewerPanel);
+        
     }
 
     private void showNotificationDialog(String message) {
@@ -381,6 +423,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        CardPanel1 = new javax.swing.JPanel();
         TopActionPanel = new javax.swing.JPanel();
         jPilihFileButton = new javax.swing.JButton();
         pathFileJTextField = new javax.swing.JTextField();
@@ -388,8 +431,15 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         BottomActionPanel = new javax.swing.JPanel();
         ProgressPanel = new javax.swing.JPanel();
         progressBar = new javax.swing.JProgressBar();
+        CardPanel2 = new javax.swing.JPanel();
+        PDFViewer = new javax.swing.JScrollPane();
+        ActionPDFViewer = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
 
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
+        setName(""); // NOI18N
+        setLayout(new java.awt.CardLayout());
+
+        CardPanel1.setLayout(new javax.swing.BoxLayout(CardPanel1, javax.swing.BoxLayout.Y_AXIS));
 
         jPilihFileButton.setText("Pilih File");
 
@@ -403,7 +453,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPilihFileButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pathFileJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
+                .addComponent(pathFileJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
                 .addContainerGap())
         );
         TopActionPanelLayout.setVerticalGroup(
@@ -416,23 +466,23 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        add(TopActionPanel);
+        CardPanel1.add(TopActionPanel);
 
         TablePanel.setLayout(new java.awt.BorderLayout());
-        add(TablePanel);
+        CardPanel1.add(TablePanel);
 
         javax.swing.GroupLayout BottomActionPanelLayout = new javax.swing.GroupLayout(BottomActionPanel);
         BottomActionPanel.setLayout(BottomActionPanelLayout);
         BottomActionPanelLayout.setHorizontalGroup(
             BottomActionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 613, Short.MAX_VALUE)
+            .addGap(0, 625, Short.MAX_VALUE)
         );
         BottomActionPanelLayout.setVerticalGroup(
             BottomActionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 395, Short.MAX_VALUE)
         );
 
-        add(BottomActionPanel);
+        CardPanel1.add(BottomActionPanel);
 
         javax.swing.GroupLayout ProgressPanelLayout = new javax.swing.GroupLayout(ProgressPanel);
         ProgressPanel.setLayout(ProgressPanelLayout);
@@ -440,7 +490,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             ProgressPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ProgressPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
+                .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
                 .addContainerGap())
         );
         ProgressPanelLayout.setVerticalGroup(
@@ -451,15 +501,58 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        add(ProgressPanel);
+        CardPanel1.add(ProgressPanel);
+
+        add(CardPanel1, "card6");
+
+        CardPanel2.setLayout(new javax.swing.BoxLayout(CardPanel2, javax.swing.BoxLayout.Y_AXIS));
+        CardPanel2.add(PDFViewer);
+
+        jButton1.setText("Back");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout ActionPDFViewerLayout = new javax.swing.GroupLayout(ActionPDFViewer);
+        ActionPDFViewer.setLayout(ActionPDFViewerLayout);
+        ActionPDFViewerLayout.setHorizontalGroup(
+            ActionPDFViewerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ActionPDFViewerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1)
+                .addContainerGap(543, Short.MAX_VALUE))
+        );
+        ActionPDFViewerLayout.setVerticalGroup(
+            ActionPDFViewerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ActionPDFViewerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1)
+                .addGap(0, 419, Short.MAX_VALUE))
+        );
+
+        CardPanel2.add(ActionPDFViewer);
+
+        add(CardPanel2, "card4");
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        CardPanel1.setVisible(true);
+        CardPanel2.setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel ActionPDFViewer;
     private javax.swing.JPanel BottomActionPanel;
+    private javax.swing.JPanel CardPanel1;
+    private javax.swing.JPanel CardPanel2;
+    private javax.swing.JScrollPane PDFViewer;
     private javax.swing.JPanel ProgressPanel;
     private javax.swing.JPanel TablePanel;
     private javax.swing.JPanel TopActionPanel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jPilihFileButton;
     private javax.swing.JTextField pathFileJTextField;
     private javax.swing.JProgressBar progressBar;

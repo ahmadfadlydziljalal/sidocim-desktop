@@ -21,8 +21,8 @@ import javax.swing.SwingUtilities;
 public class App extends javax.swing.JFrame {
 
     
-    static final int WINDOW_WIDTH = 919;
-    static final int WINDOW_HEIGHT = 500;
+    static final int WINDOW_WIDTH = 1200;
+    static final int WINDOW_HEIGHT = 768;
     
     private static App app;
     private final MainForm mainForm;
@@ -60,6 +60,7 @@ public class App extends javax.swing.JFrame {
         loginForm = new LoginForm();
         
         setContentPane(mainForm);
+        
     }
 
     public static void showForm(Component component) {

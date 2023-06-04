@@ -27,8 +27,8 @@ import javax.swing.border.EmptyBorder;
 public class Menu extends JPanel {
 
     private final String menuItems[][] = {
-        {"~MAIN~"},
-        {"Dashboard"},
+//        {"~MAIN~"},
+//        {"Dashboard"},
         {"~STAMP DEPO~"},
         {"Process"},        
 //        {"Test"},

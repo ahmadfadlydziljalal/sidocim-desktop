@@ -68,6 +68,19 @@
             <artifactId>easytable</artifactId>
             <version>0.8.5</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.github.pcorless.icepdf</groupId>
+            <artifactId>icepdf-core</artifactId>
+            <version>7.0.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.pcorless.icepdf</groupId>
+            <artifactId>icepdf-viewer</artifactId>
+            <version>7.0.2</version>
+        </dependency>
+        
     </dependencies>
     
     <properties>
@@ -76,6 +89,15 @@
         <maven.compiler.target>17</maven.compiler.target>
         <exec.mainClass>com.tresnamuda.sidocim.App</exec.mainClass>
     </properties>
+    
+    <profiles>
+        <profile>
+            <properties>
+                
+            </properties>
+        </profile>
+    </profiles>
+
     
     <build>
         
