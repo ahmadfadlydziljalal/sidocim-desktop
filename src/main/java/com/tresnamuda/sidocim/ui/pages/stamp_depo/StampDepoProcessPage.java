@@ -7,6 +7,7 @@ package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 import com.tresnamuda.sidocim.App;
 import com.tresnamuda.sidocim.models.ExcelFileReader;
 import com.tresnamuda.sidocim.utils.CheckboxRenderer;
+import com.tresnamuda.sidocim.utils.ICEPdfHelper;
 import com.tresnamuda.sidocim.utils.XLSFileFilter;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -374,7 +375,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
             document.save(filePath);
             document.close();
 
-            openPdf(filePath);
+            openPdf(filePath, false);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -382,30 +383,18 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
 
     }
 
-    private void openPdf(String file) {
+    private void openPdf(String file, Boolean isOpenInNewFrame) {
 
-        CardPanel1.setVisible(false);
-        CardPanel2.setVisible(true);
+        if (isOpenInNewFrame) {
+            PDFViewerStampDepo pdfvsd = new PDFViewerStampDepo(file);
+            pdfvsd.setVisible(true);
+        } else {
+            CardPanel1.setVisible(false);
+            CardPanel2.setVisible(true);
 
-        SwingController controller = new SwingController();
-        SwingViewBuilder factory = new SwingViewBuilder(controller);
-        JPanel viewerPanel = factory.buildViewerPanel();
-        ComponentKeyBinding.install(controller, viewerPanel);
-        controller.getDocumentViewController().setAnnotationCallback(
-                new MyAnnotationCallback(
-                        controller.getDocumentViewController()
-                )
-        );
-
-
-        try {
-            File propertiesFile = new File(App.class.getResource("/application.properties").toURI());
-            ViewerPropertiesManager.importProperties(propertiesFile);
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(StampDepoProcessPage.class.getName()).log(Level.SEVERE, null, ex);
+            ICEPdfHelper icepdf = new ICEPdfHelper(file);
+            PDFViewer.setViewportView(icepdf.getViewerPanel());
         }
-        controller.openDocument(file);
-        PDFViewer.setViewportView(viewerPanel);
 
     }
 
