@@ -5,9 +5,11 @@
 package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 
 import com.tresnamuda.sidocim.App;
+import com.tresnamuda.sidocim.pojo.ContainerPojo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,16 +32,11 @@ import org.vandeseer.easytable.structure.cell.TextCell;
  *
  * @author dzil
  */
-public class PDFRenderer {
+public class PDFFileRenderer {
 
     private final DefaultTableModel tableModel;
     private final String excelFile;
-    private PDDocument document;
     private String pdfReportFile;
-    private PDPageContentStream contentStream;
-    private TableDrawer tableDrawer;
-
-    private final PDPage page = new PDPage(PDRectangle.A4);
     private final PDType1Font header1Font = PDType1Font.HELVETICA_BOLD;
     private final PDType1Font header2Font = PDType1Font.HELVETICA;
     private final PDType1Font contentFont = PDType1Font.HELVETICA;
@@ -52,7 +49,7 @@ public class PDFRenderer {
         return this.pdfReportFile;
     }
 
-    public PDFRenderer(DefaultTableModel tableModel, String excelFile) {
+    public PDFFileRenderer(DefaultTableModel tableModel, String excelFile) {
         this.tableModel = tableModel;
         this.excelFile = excelFile;
     }
@@ -79,7 +76,7 @@ public class PDFRenderer {
         return selectedRows;
     }
 
-    private void renderHeader() {
+    private void renderHeader(PDPage page, PDPageContentStream contentStream) {
         try {
             // Set header 1
             contentStream.beginText();
@@ -93,7 +90,7 @@ public class PDFRenderer {
             contentStream.beginText();
             contentStream.newLineAtOffset(25, 785);
             contentStream.setFont(header2Font, 10);
-            contentStream.showText(renderLongText(App.readProperties().getProperty("application.alamatperusahaan")));
+            contentStream.showText(renderLongText(page, contentStream, App.readProperties().getProperty("application.alamatperusahaan")));
             contentStream.endText();
 
             // Draw a horizontal line
@@ -102,12 +99,13 @@ public class PDFRenderer {
             contentStream.lineTo(page.getMediaBox().getWidth() - 25, 760);  // Ending point of the line
             contentStream.stroke();  // Draw the line
         } catch (IOException ex) {
-            Logger.getLogger(PDFRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PDFFileRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+//
 
-    private void renderTitle() {
+    private void renderTitle(PDPageContentStream contentStream) {
         try {
             contentStream.beginText();
             contentStream.setFont(header1Font, 13);
@@ -115,12 +113,12 @@ public class PDFRenderer {
             contentStream.showText("Instruksi Pemulangan Kontainer Kosong");
             contentStream.endText();
         } catch (IOException ex) {
-            Logger.getLogger(PDFRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PDFFileRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    private String renderLongText(String longString) throws IOException {
+    private String renderLongText(PDPage page, PDPageContentStream contentStream, String longString) throws IOException {
 
         // Width of the text box
         float textBoxWidth = page.getMediaBox().getWidth() - 25;  // Adjust the width as needed
@@ -145,8 +143,9 @@ public class PDFRenderer {
         return line.toString().trim();
 
     }
+//
 
-    private void renderContent(int row) {
+    private void renderContent(int row, PDPage page, PDPageContentStream contentStream) {
         try {
 
             // Show some content of document here
@@ -158,6 +157,8 @@ public class PDFRenderer {
             contentStream.newLine();
             contentStream.showText(
                     renderLongText(
+                            page,
+                            contentStream,
                             App.readProperties().getProperty("customer.depo.TRAS.nama")
                             + " Alamat : "
                             + App.readProperties().getProperty("customer.depo.TRAS.alamat")
@@ -194,7 +195,7 @@ public class PDFRenderer {
                     .build();
 
             // Set up the drawer
-            tableDrawer = TableDrawer.builder()
+            TableDrawer tableDrawer = TableDrawer.builder()
                     .contentStream(contentStream)
                     .startX(20f)
                     .startY(680)
@@ -204,36 +205,33 @@ public class PDFRenderer {
             // And go for it!
             tableDrawer.draw();
 
-        } catch (IOException ex) {
-            Logger.getLogger(PDFRenderer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    private void renderFooter() {
-        try {
             contentStream.beginText();
-            
+
             contentStream.newLineAtOffset(25, (tableDrawer.getFinalY() - 30));
             contentStream.setFont(contentFont, 10);
             contentStream.showText(App.readProperties().getProperty("application.stampdepo.footer.line_1"));
-            
+
             contentStream.newLine();
             contentStream.showText(App.readProperties().getProperty("application.stampdepo.footer.line_2"));
-            
+
             contentStream.newLine();
             contentStream.showText(
-                    renderLongText(App.readProperties().getProperty("application.stampdepo.footer.line_3"))
+                    renderLongText(
+                            page,
+                            contentStream,
+                            App.readProperties().getProperty("application.stampdepo.footer.line_3")
+                    )
             );
-            
+
             contentStream.endText();
+
         } catch (IOException ex) {
-            Logger.getLogger(PDFRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PDFFileRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    private void saveFile() {
+    private void saveFile(PDDocument document) {
         File file = new File(excelFile);
         String extractedPath = FilenameUtils.removeExtension(
                 FilenameUtils.removeExtension(file.getName())
@@ -245,15 +243,16 @@ public class PDFRenderer {
             directory.mkdirs();
         }
 
+        this.pdfReportFile = directoryPath + "/report.pdf";
         try {
-            pdfReportFile = directoryPath + "/report.pdf";
-            document.save(pdfReportFile);
+            document.save(this.pdfReportFile);
             document.close();
         } catch (IOException ex) {
-            Logger.getLogger(PDFRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PDFFileRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+//
 
     public void handleToPrintPdf() {
 
@@ -261,35 +260,68 @@ public class PDFRenderer {
         int[] selectedRows = getSelectedRows();
 
         // Generate the PDF file
-        document = new PDDocument();
-        try {
+        try (PDDocument document = new PDDocument()) {
 
             PDResources resources = new PDResources();
             resources.put(COSName.getPDFName("Font"), header1Font);
-            resources.put(COSName.getPDFName("Font"), header2Font);
-            resources.put(COSName.getPDFName("Font"), contentFont);
 
             // Print the selected rows
             for (int row : selectedRows) {
 
+                PDPage page = new PDPage(PDRectangle.A4);
                 document.addPage(page);
+
                 page.setResources(resources);
 
-                contentStream = new PDPageContentStream(document, page);
+                ContainerPojo containerPojo = new ContainerPojo(
+                        tableModel.getValueAt(row, 2).toString(),
+                        tableModel.getValueAt(row, 3).toString(),
+                        tableModel.getValueAt(row, 12).toString(),
+                        tableModel.getValueAt(row, 8).toString(),
+                        tableModel.getValueAt(row, 13).toString(),
+                        tableModel.getValueAt(row, 4).toString()
+                );
 
-                this.renderHeader();
-                this.renderTitle();
-                this.renderContent(row);
-                this.renderFooter();
-
-                contentStream.close();
+                PDFPageRenderer pageRenderer = new PDFPageRenderer(containerPojo,  new PDPageContentStream(document, page));
+                pageRenderer.render();
+                
             }
 
-            saveFile();
+            saveFile(document);
 
         } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
 
+//    public void handleToPrintPdf() throws IOException {
+//
+//        // Get the selected rows
+//        int[] selectedRows = getSelectedRows();
+//
+//        PDDocument document = new PDDocument();
+//         // Generate the PDF file
+//       
+//
+//        // Print the selected rows
+//        for (int row : selectedRows) {
+//
+//            ContainerPojo containerPojo = new ContainerPojo(
+//                    tableModel.getValueAt(row, 2).toString(),
+//                    tableModel.getValueAt(row, 3).toString(),
+//                    tableModel.getValueAt(row, 12).toString(),
+//                    tableModel.getValueAt(row, 8).toString(),
+//                    tableModel.getValueAt(row, 13).toString(),
+//                    tableModel.getValueAt(row, 4).toString()
+//            );
+//
+//            PDFPageRenderer pageRenderer = new PDFPageRenderer(containerPojo, document);
+//            pageRenderer.render();
+//
+//        }
+//
+//        saveFile(document);
+//
+//    }
 }

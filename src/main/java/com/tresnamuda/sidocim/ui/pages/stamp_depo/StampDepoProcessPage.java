@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +27,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 
 /**
  *
@@ -162,7 +162,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         button.setText("Print to PDF");
         button.setSize(new Dimension(10, 10));
         button.addActionListener((ActionEvent event) -> {
-            PDFRenderer renderer = new PDFRenderer(tableModel, pathFileJTextField.getText());
+            PDFFileRenderer renderer = new PDFFileRenderer(tableModel, pathFileJTextField.getText());
             renderer.handleToPrintPdf();
             openPdf(renderer.getPdfreportFile(), false);
         });
