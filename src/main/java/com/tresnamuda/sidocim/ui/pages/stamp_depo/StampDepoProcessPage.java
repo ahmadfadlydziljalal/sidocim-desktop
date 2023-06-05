@@ -29,19 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.pdfbox.cos.COSName;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.PDResources;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.vandeseer.easytable.TableDrawer;
-import org.vandeseer.easytable.settings.HorizontalAlignment;
-import org.vandeseer.easytable.structure.Row;
-import org.vandeseer.easytable.structure.Table;
-import org.vandeseer.easytable.structure.cell.TextCell;
+
 
 /**
  *
