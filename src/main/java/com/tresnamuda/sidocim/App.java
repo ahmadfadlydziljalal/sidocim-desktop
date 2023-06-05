@@ -12,6 +12,10 @@ import com.tresnamuda.sidocim.ui.layout.MainForm;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -25,6 +29,8 @@ public class App extends javax.swing.JFrame {
     static final int WINDOW_HEIGHT = 768;
     
     private static App app;
+    private static Properties properties;
+    
     private final MainForm mainForm;
     private final LoginForm loginForm;
 
@@ -49,9 +55,14 @@ public class App extends javax.swing.JFrame {
    
     /**
      * Creates new form Application
+     * @throws java.io.IOException
      */
-    public App() {
+    public App() throws IOException {
+        
+        
+        initProperties();
         initComponents();
+        
         
         setSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         setLocationRelativeTo(null);
@@ -59,8 +70,18 @@ public class App extends javax.swing.JFrame {
         mainForm = new MainForm();
         loginForm = new LoginForm();
         
+        
         setContentPane(mainForm);
         
+    }
+    
+    public static void initProperties() throws IOException{
+        PropertiesReader propertiesReader = new PropertiesReader();
+        properties = propertiesReader.getProperties();
+    }
+    
+    public static Properties readProperties(){
+        return properties;
     }
 
     public static void showForm(Component component) {
@@ -80,6 +101,8 @@ public class App extends javax.swing.JFrame {
         SwingUtilities.updateComponentTreeUI(app.loginForm);
         FlatAnimatedLafChange.hideSnapshotWithAnimation();
     }
+    
+ 
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -121,12 +144,18 @@ public class App extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]){
         FlatLaf.registerCustomDefaultsSource("theme");
         FlatMacDarkLaf.setup();
+        
         java.awt.EventQueue.invokeLater(() -> {
-            app = new App();
-            app.setVisible(true);
+            try {
+                app = new App();
+                app.setVisible(true);
+            } catch (IOException ex) {
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         });
     }
 

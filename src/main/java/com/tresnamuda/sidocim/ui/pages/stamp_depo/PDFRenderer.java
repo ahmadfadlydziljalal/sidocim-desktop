@@ -4,6 +4,7 @@
  */
 package com.tresnamuda.sidocim.ui.pages.stamp_depo;
 
+import com.tresnamuda.sidocim.App;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,16 +86,14 @@ public class PDFRenderer {
             contentStream.setFont(header1Font, 16);
             contentStream.setLeading(14.5f);
             contentStream.newLineAtOffset(25, 800);
-            contentStream.showText("PT. PELAYARAN TRESNAMUDA SEJATI");
+            contentStream.showText(App.readProperties().getProperty("application.namaperusahaan"));
             contentStream.endText();
 
             // Set header 2
             contentStream.beginText();
             contentStream.newLineAtOffset(25, 785);
             contentStream.setFont(header2Font, 10);
-            contentStream.showText("Komplek Ruko Sunter Permai Indah - Jl. Mitra Sunter Boulevard. Block B No. 12-16.");
-            contentStream.newLine();
-            contentStream.showText("Jakarta Utara, 14360, Indonesia, Telp. +6221-6522333 (Hunting), Fax. +6221-6522336, 6522337");
+            contentStream.showText(renderLongText(App.readProperties().getProperty("application.alamatperusahaan")));
             contentStream.endText();
 
             // Draw a horizontal line
@@ -110,7 +109,6 @@ public class PDFRenderer {
 
     private void renderTitle() {
         try {
-            // Set TITLE
             contentStream.beginText();
             contentStream.setFont(header1Font, 13);
             contentStream.newLineAtOffset(20 * 8, 745);
@@ -122,40 +120,49 @@ public class PDFRenderer {
 
     }
 
+    private String renderLongText(String longString) throws IOException {
+
+        // Width of the text box
+        float textBoxWidth = page.getMediaBox().getWidth() - 25;  // Adjust the width as needed
+
+        // Auto-wrap the long string to the next line
+        float fontSize = 11;
+        float leading = 14.5f;
+
+        String[] words = longString.split(" ");
+        StringBuilder line = new StringBuilder();
+        for (String word : words) {
+            float stringWidth = fontSize * contentFont.getStringWidth(line + " " + word) / 1000;
+            if (stringWidth > textBoxWidth) {
+                contentStream.showText(line.toString().trim());
+                contentStream.newLineAtOffset(0, -leading);
+                line = new StringBuilder(word);
+            } else {
+                line.append(" ").append(word);
+            }
+        }
+
+        return line.toString().trim();
+
+    }
+
     private void renderContent(int row) {
         try {
-            
+
             // Show some content of document here
             contentStream.beginText();
             contentStream.newLineAtOffset(25, 725);
             contentStream.setFont(contentFont, 11);
+
             contentStream.showText("DEPO: ");
             contentStream.newLine();
-
-            // String to be auto-wrapped
-            String longString = "PT.TUNAS MITRA SELARAS ( TRAS ) Alamat : Kawasan Industri Cakung Remaja JL.Raya Rorotan Babek TNI Blok B No.07 Jakarta Utara 14140 Indonesia, Telp : 021 22946296";
-
-            // Width of the text box
-            float textBoxWidth = page.getMediaBox().getWidth() - 25;  // Adjust the width as needed
-
-            // Auto-wrap the long string to the next line
-            float fontSize = 11;
-            float leading = 14.5f;
-
-            String[] words = longString.split(" ");
-            StringBuilder line = new StringBuilder();
-            for (String word : words) {
-                float stringWidth = fontSize * contentFont.getStringWidth(line + " " + word) / 1000;
-                if (stringWidth > textBoxWidth) {
-                    contentStream.showText(line.toString().trim());
-                    contentStream.newLineAtOffset(0, -leading);
-                    line = new StringBuilder(word);
-                } else {
-                    line.append(" ").append(word);
-                }
-            }
-
-            contentStream.showText(line.toString().trim());
+            contentStream.showText(
+                    renderLongText(
+                            App.readProperties().getProperty("customer.depo.TRAS.nama")
+                            + " Alamat : "
+                            + App.readProperties().getProperty("customer.depo.TRAS.alamat")
+                    )
+            );
             contentStream.endText();
 
             // Build the table
@@ -206,17 +213,19 @@ public class PDFRenderer {
     private void renderFooter() {
         try {
             contentStream.beginText();
+            
             contentStream.newLineAtOffset(25, (tableDrawer.getFinalY() - 30));
             contentStream.setFont(contentFont, 10);
-            contentStream.showText("PERHATIAN !!!");
+            contentStream.showText(App.readProperties().getProperty("application.stampdepo.footer.line_1"));
+            
             contentStream.newLine();
-            contentStream.showText("- Consignee / EMKL Harus Lakukan Cek Fisik dan ambil Photo Isotank Sebelum keluar CY");
+            contentStream.showText(App.readProperties().getProperty("application.stampdepo.footer.line_2"));
+            
             contentStream.newLine();
-            contentStream.showText("- Apabila Terjadi Kerusakan / Kehilangan Part ( Aksesoris ) Isotank akibat kelalaian Pihak Importir maka EMKL");
-            contentStream.newLine();
-            contentStream.showText("  harus menyerahkan deposit seharga/ Senilai perbaikan kerusakan atau pergantian part");
-            contentStream.newLine();
-            contentStream.showText("  di kantor PT.Pelayaran Tresnamuda Sejati");
+            contentStream.showText(
+                    renderLongText(App.readProperties().getProperty("application.stampdepo.footer.line_3"))
+            );
+            
             contentStream.endText();
         } catch (IOException ex) {
             Logger.getLogger(PDFRenderer.class.getName()).log(Level.SEVERE, null, ex);
@@ -245,7 +254,7 @@ public class PDFRenderer {
         }
 
     }
-    
+
     public void handleToPrintPdf() {
 
         // Get the selected rows
@@ -272,7 +281,7 @@ public class PDFRenderer {
                 this.renderTitle();
                 this.renderContent(row);
                 this.renderFooter();
-                
+
                 contentStream.close();
             }
 

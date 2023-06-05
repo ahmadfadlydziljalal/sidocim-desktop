@@ -88,33 +88,32 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <exec.mainClass>com.tresnamuda.sidocim.App</exec.mainClass>
+        <application.properties>src/main/resources/application.properties</application.properties>
     </properties>
-    
-    <profiles>
-        <profile>
-            <properties>
-                
-            </properties>
-        </profile>
-    </profiles>
-
-    
-    <build>
         
+    <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
+                    
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    
                     <archive>
                         <manifest>
                             <mainClass>com.tresnamuda.sidocim.App</mainClass>
                         </manifest>
                     </archive>
+                    
                     <appendAssemblyId>false</appendAssemblyId>
+                    
+                    <files>
+                        <file>application.properties</file>
+                    </files>
+                    
                 </configuration>
                 <executions>
                     <execution>
