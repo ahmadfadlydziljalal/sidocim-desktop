@@ -35,27 +35,31 @@ public class PDFPageRenderer {
     private final PDType1Font header2Font = PDType1Font.HELVETICA;
     private final PDType1Font contentFont = PDType1Font.HELVETICA;
 
-    private final PDPage page = new PDPage(PDRectangle.A4);
+    private final PDPage page;
     private final PDPageContentStream contentStream;
     private final ContainerPojo containerPojo;
+    private TableDrawer tableDrawer;
+    
 
-    public PDFPageRenderer(ContainerPojo containerPojo,PDPageContentStream contentStream) {
+    public PDFPageRenderer(PDPage page ,PDPageContentStream contentStream, ContainerPojo containerPojo) {
+        this.page = page;
         this.containerPojo = containerPojo;
         this.contentStream = contentStream;
-
     }
 
-    public void render() throws IOException {
-        
-        try (contentStream) {
-            renderHeader();
-            renderTitle();
-            renderContent();
-            contentStream.close();
-        }
-        
-
-
+    public void render(){
+        renderHeader();
+        renderTitle();
+        renderContent();
+        renderFooter();
+    }
+    
+    /**
+     *
+     * @throws IOException
+     */
+    public void close() throws IOException{
+        contentStream.close();
     }
 
     private void renderHeader() {
@@ -147,7 +151,7 @@ public class PDFPageRenderer {
                     .build();
 
             // Set up the drawer
-            TableDrawer tableDrawer = TableDrawer.builder()
+            tableDrawer = TableDrawer.builder()
                     .contentStream(contentStream)
                     .startX(20f)
                     .startY(680)
@@ -157,6 +161,17 @@ public class PDFPageRenderer {
             // And go for it!
             tableDrawer.draw();
 
+           
+
+        } catch (IOException ex) {
+            Logger.getLogger(PDFFileRenderer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
+    private void renderFooter(){
+    
+        try {
             contentStream.beginText();
 
             contentStream.newLineAtOffset(25, (tableDrawer.getFinalY() - 30));
@@ -172,13 +187,11 @@ public class PDFPageRenderer {
                             App.readProperties().getProperty("application.stampdepo.footer.line_3")
                     )
             );
-
             contentStream.endText();
-
+            
         } catch (IOException ex) {
-            Logger.getLogger(PDFFileRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PDFPageRenderer.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     private String renderLongText(String longString) throws IOException {

@@ -163,8 +163,7 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
         button.setSize(new Dimension(10, 10));
         button.addActionListener((ActionEvent event) -> {
             PDFFileRenderer renderer = new PDFFileRenderer(tableModel, pathFileJTextField.getText());
-            renderer.handleToPrintPdf();
-            openPdf(renderer.getPdfreportFile(), false);
+            openPdf(renderer.handleToPrintPdf(), false);
         });
 
         BottomActionPanel.removeAll();
