@@ -397,16 +397,16 @@ public class StampDepoProcessPage extends javax.swing.JPanel {
                 )
         );
 
+
         try {
             File propertiesFile = new File(App.class.getResource("/application.properties").toURI());
             ViewerPropertiesManager.importProperties(propertiesFile);
         } catch (URISyntaxException ex) {
             Logger.getLogger(StampDepoProcessPage.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         controller.openDocument(file);
         PDFViewer.setViewportView(viewerPanel);
-        
+
     }
 
     private void showNotificationDialog(String message) {
