@@ -10,6 +10,7 @@ import org.icepdf.ri.common.MyAnnotationCallback;
 import org.icepdf.ri.common.SwingController;
 import org.icepdf.ri.common.SwingViewBuilder;
 
+
 /**
  *
  * @author dzil
@@ -35,7 +36,7 @@ public final class ICEPdfHelper {
                 new MyAnnotationCallback(
                         controller.getDocumentViewController()
                 )
-        );
+        );        
         controller.openDocument(this.pathFile);
     }
 
