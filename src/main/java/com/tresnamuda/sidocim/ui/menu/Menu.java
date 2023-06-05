@@ -6,6 +6,7 @@ package com.tresnamuda.sidocim.ui.menu;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.util.UIScale;
+import com.tresnamuda.sidocim.App;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -68,7 +69,7 @@ public class Menu extends JPanel {
 
     private final List<MenuEvent> events = new ArrayList<>();
     private boolean menuFull = true;
-    private final String headerName = "Tresnamuda";
+    private final String headerName;
 
     private final boolean hideMenuTitleOnMinimum = true;
     private final int menuTitleLeftInset = 5;
@@ -78,6 +79,7 @@ public class Menu extends JPanel {
     private final int headerFullHgap = 5;
 
     public Menu() {
+        headerName =  App.readProperties().getProperty("application.namaaplikasi");
         init();
     }
 
